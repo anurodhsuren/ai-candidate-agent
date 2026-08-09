@@ -1,0 +1,85 @@
+{
+  "name": "Anurodh Sujal Suren",
+  "title": "Agentic AI Engineer",
+  "contact": {
+    "phone": "+91-7903527385",
+    "email": "anurodh.sujal.suren@gmail.com"
+  },
+  "education": [
+    {
+      "institution": "Birla Institute of Technology, Mesra",
+      "degree": "B.Tech, Computer Science & Engineering",
+      "expected_graduation": 2027,
+      "cgpa": 8.22
+    },
+    {
+      "institution": "Kairali School",
+      "qualification": "12th Science",
+      "score": "89%"
+    },
+    {
+      "institution": "St Thomas School",
+      "qualification": "10th",
+      "score": "93.5%"
+    }
+  ],
+  "skills": {
+    "languages": [
+      "Python",
+      "C",
+      "C++"
+    ],
+    "ai_and_agentic_systems": [
+      "Retrieval-Augmented Generation (RAG)",
+      "Vector Search (HNSW, KD-Tree)",
+      "Embeddings & LLM Integration (Ollama)",
+      "Prompt Engineering"
+    ],
+    "backend_and_apis": [
+      "Flask",
+      "REST API Design",
+      "uv"
+    ],
+    "tools": [
+      "Git",
+      "GitHub",
+      "VS Code"
+    ],
+    "core_subjects": [
+      "Data Structures & Algorithms",
+      "Object-Oriented Programming",
+      "DBMS",
+      "Operating Systems"
+    ]
+  },
+  "summary": "Computer Science undergraduate focused on agentic AI systems, retrieval-augmented generation, and backend engineering. Designed and built a vector database and RAG pipeline from scratch in Python, implementing HNSW and KD-Tree search algorithms and integrating local LLMs for grounded question answering. Strong foundation in data structures, algorithms, and backend development, seeking internship opportunities to build production-grade AI systems.",
+  "projects": [
+    {
+      "name": "VectorDB \u2014 RAG Pipeline & Vector Search Engine",
+      "technologies": [
+        "Python",
+        "Flask",
+        "Ollama",
+        "RAG"
+      ],
+      "year": 2026,
+      "details": [
+        "Built a vector database from scratch in pure Python, implementing Brute Force, KD-Tree, and HNSW (Hierarchical Navigable Small World) nearest-neighbor search algorithms without external ANN libraries.",
+        "Architected a complete Retrieval-Augmented Generation (RAG) pipeline \u2014 chunking documents, generating 768-dimensional embeddings with the local nomic-embed-text model via Ollama, indexing them with HNSW, and grounding llama3.2 responses in retrieved context.",
+        "Exposed the engine through a Flask REST API supporting semantic search, document insertion, deletion, and benchmarking endpoints, while managing dependencies with uv.",
+        "Built a 2D PCA visualization rendered on an HTML5 canvas for semantic clustering, and benchmarked HNSW against KD-Tree and brute-force search to demonstrate logarithmic-time retrieval performance."
+      ]
+    }
+  ],
+  "extracurricular": [
+    "Regular problem-solving on LeetCode and HackerRank, strengthening algorithmic thinking and coding efficiency."
+  ],
+  "key_strengths": [
+    "Built a vector search engine from scratch",
+    "Implemented HNSW & KD-Tree algorithms",
+    "Designed a full RAG pipeline end-to-end",
+    "Grounded local-LLM Q&A with Ollama"
+  ],
+  "certifications": [],
+  "social_links": []
+}

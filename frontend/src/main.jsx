@@ -1,0 +1,126 @@
+import React, { useState } from "react";
+import { createRoot } from "react-dom/client";
+import "./styles.css";
+const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
+function App() {
+    const [messages, setMessages] = useState([]), [input, setInput] = useState(""), [job, setJob] = useState(""), [result, setResult] = useState(null), [busy, setBusy] = useState(false), [error, setError] = useState("");
+    async function send() {
+        const q = input.trim();
+
+        if (!q || busy) {
+            return;
+        }
+
+        const history = messages;
+
+        setInput("");
+        setError("");
+        setBusy(true);
+
+        setMessages((current) => [
+            ...current,
+            {
+                role: "user",
+                content: q,
+            },
+            {
+                role: "assistant",
+                content: "",
+            },
+        ]);
+
+        try {
+            console.log("Sending request to:", `${API}/chat`);
+
+            const response = await fetch(`${API}/chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "text/plain",
+                },
+                body: JSON.stringify({
+                    question: q,
+                    history: history,
+                }),
+            });
+
+            console.log("Backend response:", response.status);
+
+            if (!response.ok) {
+                let errorMessage = `Backend error: ${response.status}`;
+
+                try {
+                    const errorData = await response.json();
+
+                    if (errorData.detail) {
+                        errorMessage = errorData.detail;
+                    }
+                } catch {
+                    // Ignore JSON parsing errors
+                }
+
+                throw new Error(errorMessage);
+            }
+
+            if (!response.body) {
+                throw new Error("The backend returned an empty response.");
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            let answer = "";
+
+            while (true) {
+                const { value, done } = await reader.read();
+
+                if (done) {
+                    break;
+                }
+
+                const chunk = decoder.decode(value, {
+                    stream: true,
+                });
+
+                answer += chunk;
+
+                setMessages((current) => [
+                    ...current.slice(0, -1),
+                    {
+                        role: "assistant",
+                        content: answer,
+                    },
+                ]);
+            }
+
+            if (!answer) {
+                throw new Error("The AI returned an empty response.");
+            }
+
+        } catch (error) {
+            console.error("Chat error:", error);
+
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : "Unable to connect to the backend."
+            );
+
+            // Remove the empty assistant message
+            setMessages((current) => current.slice(0, -1));
+
+        } finally {
+            setBusy(false);
+        }
+    }
+    async function analyze() {
+        if (!job.trim()) return; setError("");
+        try { const r = await fetch(`${API}/job-match`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ job_description: job }) }); const data = await r.json(); if (!r.ok) throw new Error(data.detail); setResult(data) } catch (e) { setError(e.message) }
+    }
+    return <div className="page"><header><div><h1>AI Candidate Agent</h1><p>Anurodh Sujal Suren · Agentic AI Engineer</p></div><button onClick={() => setMessages([])}>Clear chat</button></header>
+        <main><section className="card chat"><div className="messages">{messages.length === 0 ? <div className="welcome"><h2>Ask about the candidate</h2><p>Try: “Tell me about the VectorDB project.”</p></div> : messages.map((m, i) => <div className={"msg " + m.role} key={i}><b>{m.role === "user" ? "You" : "AI"}</b><p>{m.content || "Thinking..."}</p></div>)}</div>
+            <div className="composer"><input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()} placeholder="Ask about resume, jobs, or projects..." disabled={busy} /><button onClick={send} disabled={busy}>{busy ? "..." : "Send"}</button></div></section>
+            <aside className="card"><h2>Job Matcher</h2><p>Paste a job description to compare it with the candidate profile.</p><textarea value={job} onChange={e => setJob(e.target.value)} placeholder="Paste job description here..." /><button onClick={analyze}>Analyze job</button>{result && <div className="result"><h3>{result.suitable ? "Potential match" : "Insufficient evidence for a match"}</h3><b>Matching skills</b><ul>{result.matching_skills.map(x => <li key={x}>{x}</li>)}</ul><b>Missing / unverified</b><ul>{result.missing_or_unverified_skills.map(x => <li key={x}>{x}</li>)}</ul><b>Recommendation</b><p>{result.recommendation}</p></div>}</aside></main>{error && <div className="error">{error}</div>}</div>
+}
+createRoot(document.getElementById("root")).render(<App />);
