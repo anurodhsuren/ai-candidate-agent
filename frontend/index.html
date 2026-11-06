@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Candidate Agent</title>
+</head>
+<body>
+<div id="root">
+  <p id="boot-msg" style="font-family:sans-serif;padding:24px;color:#667085">Loading AI Candidate Agent…</p>
+</div>
+<noscript>JavaScript is disabled. Please enable it to use this app.</noscript>
+<script>
+  // Shows startup failures (script 404, syntax/module errors) instead of a blank page.
+  function showBootError(msg){
+    // Only act if React has not mounted yet; once mounted, its own error screen handles crashes.
+    var el=document.getElementById('boot-msg');
+    if(!el) return;
+    el.style.cssText='font-family:monospace;padding:24px;color:#b42318;white-space:pre-wrap';
+    el.textContent='App failed to start:\n\n'+msg;
+  }
+  window.addEventListener('error',function(e){
+    var t=e.target;
+    if(t&&(t.tagName==='SCRIPT'||t.tagName==='LINK')){showBootError('Could not load '+(t.src||t.href)+'\nCheck the file exists and you opened the Vite URL (not the file directly).');}
+    else{showBootError(e.message+(e.filename?'\n'+e.filename+':'+e.lineno:''));}
+  },true);
+  window.addEventListener('unhandledrejection',function(e){showBootError(String(e.reason&&e.reason.stack||e.reason));});
+  if(location.protocol==='file:'){showBootError('You opened this file directly (file://). Browsers block module scripts that way.\nRun "npm run dev" and open http://localhost:5173 , or "npm run build && npm run preview".');}
+</script>
+<script type="module" src="/src/main.jsx"></script>
+</body>
+</html>

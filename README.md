@@ -2,11 +2,12 @@
 
 An AI-powered candidate representative that lets recruiters and visitors interact with a candidate's profile using natural language.
 
-The application answers questions about the candidate's **resume, education, skills, and projects** using the candidate profile, and includes a **Job Description Matcher** for comparing a candidate against a role.
+The application answers questions about a candidate's **resume, education, skills, and projects** and includes a **Job Description Matcher** for comparing that candidate against a role. Upload a PDF, DOCX, or text resume to dynamically create the candidate profile used by both tools.
 
 ## Features
 
 -  Resume-grounded AI chat
+-  Dynamic PDF, DOCX, and TXT resume uploads
 -  Conversation history for follow-up questions
 -  Streaming AI responses
 -  Job Description matching
@@ -169,7 +170,7 @@ GROQ_MODEL=llama-3.3-70b-versatile
 Start the backend:
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Backend:
@@ -304,6 +305,16 @@ Conversation history helps resolve references while candidate facts remain groun
 
 # API Endpoints
 
+## Dynamic resume upload
+
+```http
+POST /resumes
+```
+
+Use **Upload resume** in the browser to create a candidate profile from a PDF, DOCX, or TXT file (up to 5 MB). The backend extracts the text, asks Groq to turn it into a structured profile, and returns an opaque `candidate_id`. The frontend sends that ID with chat and job-match calls, ensuring that each uploaded resume is used only for that browser's requests.
+
+Uploaded profiles are held in memory only: they are not written to disk and disappear when the backend restarts. `backend/app/candidate.json` remains available as the bundled demo profile when no upload has been made.
+
 ## Health Check
 
 ```http
@@ -321,7 +332,8 @@ Example:
 ```json
 {
   "question": "Tell me about the candidate.",
-  "history": []
+  "history": [],
+  "candidate_id": "optional ID returned by POST /resumes"
 }
 ```
 
@@ -337,7 +349,8 @@ Example:
 
 ```json
 {
-  "job_description": "We are looking for a Python developer with RAG experience..."
+  "job_description": "We are looking for a Python developer with RAG experience...",
+  "candidate_id": "optional ID returned by POST /resumes"
 }
 ```
 
